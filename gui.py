@@ -9,6 +9,8 @@ import os
 import argparse
 
 #import serial
+#Dylan made a change
+#senior project is gay
 
 import time
 
