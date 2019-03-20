@@ -211,12 +211,10 @@ print(" Write vehicle param 'THR_MIN' : 10")
 vehicle.parameters['THR_MIN']=10
 print(" Read new value of param 'THR_MIN': %s" % vehicle.parameters['THR_MIN'])
 
-
 print("\nPrint all parameters (iterate `vehicle.parameters`):")
 for key, value in vehicle.parameters.iteritems():
     print(" Key:%s Value:%s" % (key,value))
     
-
 print("\nCreate parameter observer using decorator")
 # Parameter string is case-insensitive
 # Value is cached (listeners are only updated on change)

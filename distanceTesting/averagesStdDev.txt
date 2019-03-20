@@ -1,0 +1,9 @@
+at 1.5m: avg = 64.3926553672, variance = 8.12566026578, std.dev = 0.0192040848423
+at 3m: avg = 67.3948717949, variance = 2.67057700537, std.dev = 0.000399804447199
+at 4.5m: avg = 71.0680933852, variance = 2.48463300491, std.dev = 0.0166420632292
+at 6m: avg = 75.4496124031, variance = 2.87233000196, std.dev = 0.0560879618635
+at 7.5m: avg = 79.1661341853, variance = 4.97395527157, std.dev = 0.0554526327474
+at 9m: avg = 80.3853427896, variance = 1.6312168646, std.dev = 0.000351037979898
+
+avg deviation for delta: 1.77696526916 RSSI/m
+avg deviation equation: 

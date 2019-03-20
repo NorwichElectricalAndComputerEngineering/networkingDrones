@@ -18,20 +18,21 @@ import time
 def switchDrones(droneNumber=1):
     #begin with drone #1
     #connect to proper Wi-Fi
+    #disable network manager
     if droneNumber == 1:
-        os.sys('iwconfig sololink')
+        os.sys('nmcli -a c up "Auto SoloLink_3FA597"')
+        time.sleep(7)
     else:
-        os.sys('iwconfig sololink2')
+        os.sys('nmcli -a c up "Auto SoloLink_40D0C5"')
+        time.sleep(7)
 
 
 def readRSSI(droneNumber=1):
     if(droneNumber == 1):
-        serial_port = serial.Serial('/dev/ttyUSB4', 9600)
-        #Export in json format. json.dumps(xbee.wait_read_frame())
+        serial_port = serial.Serial('/dev/ttyUSB0', 9600)
         xbee = XBee(serial_port)
     while True:
             try:
-            #print(xbee.readline())
                 print(xbee.wait_read_frame())
             except KeyboardInterrupt:
                 break
@@ -39,45 +40,13 @@ def readRSSI(droneNumber=1):
 
 def connectDrone(droneNumber=1):
     if droneNumber==1:
-            parser = argaparse.ArgumentParser(description='Commands vehicle to go to target')
-            parser.add_argument('--connect', help="Vehicle connection Target String")
-            args = parser.parse_args()
-            #print(args.connect)
-            connectionString = args.connect
-            sitl = None
-            if not connectionString:
-                print("ERROR")
-                import dronekit_sitl
-                sitl = dronekit_sitl.start_default()
-                connection_string = sitl.connection_string()
-            print('Connecting to Drone1 on: %s' % connection_string)
-            drone1 = connect(connection_string, wait_ready=True)
+        drone1 = connect('udpin:0.0.0.0:14550', wait_ready=True)
+        arm_and_takeoff(1, drone1)
     else:
-        parser = argaparse.ArgumentParser(description='Commands vehicle to go to target')
-        parser.add_argument('--connect', help="Vehicle connection Target String")
-        args = parser.parse_args()
-        #print(args.connect)
-        connectionString = args.connect
-        sitl = None
-        if not connectionString:
-            print("ERROR")
-            import dronekit_sitl
-            sitl = dronekit_sitl.start_default()
-            connection_string = sitl.connection_string()
-        print('Connecting to Drone 2 on: %s' % connection_string)
-        drone2 = connect(connection_string, wait_ready=True)
-
-
-
-
-
-
-
-
-
-
-
-def arm_and_takeoff(aTargetAltitude):
+        drone2 = connect('udpin:0.0.0.0:14550', wait_ready=True) 
+        arm_and_takeoff(1, drone2)
+     
+def arm_and_takeoff(aTargetAltitude, vehicle):
     print("Basic pre-arm checks")
     while not vehicle.is_armable:
         print(" Waiting for vehicle to initialise...")
@@ -107,33 +76,34 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
+def closeAll():
+    global drone1
+    drone1.mode = VehicleMode("RTL")
+    time.sleep(2)
+    drone1.close()
+    time.sleep(30)
+    global drone2
+    drone2.mode = VehicleMode("RTL")
+    time.sleep(2)
+    drone2.close()
 
-arm_and_takeoff(10)
 
-print("Set default/target airspeed to 3")
-vehicle.airspeed = 3
+def moveDrone(droneNumber=1):
+    if droneNumber == 1:
+        global drone1
+        drone1.airspeed = 1
+        lat1 = drone1.location.global_relative_frame.lat
+        long1 = drone1.location.global_relative_frame.long
+        altitude = drone1.location.global_relative_frame.alt
+        # point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
+        drone1.simple_goto(lat1, long1, altitude)
+    else:
+        global drone2
+        drone2.airspeed = 1
 
-print("Going towards first point for 30 seconds ...")
-point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
-vehicle.simple_goto(point1)
-
-# sleep so we can see the change in map
-time.sleep(30)
-
-print("Going towards second point for 30 seconds (groundspeed set to 10 m/s) ...")
-point2 = LocationGlobalRelative(-35.363244, 149.168801, 20)
-vehicle.simple_goto(point2, groundspeed=10)
-
-# sleep so we can see the change in map
-time.sleep(30)
-
-print("Returning to Launch")
-vehicle.mode = VehicleMode("RTL")
-
+    
 # Close vehicle object before exiting script
-print("Close vehicle object")
-vehicle.close()
 
-# Shut down simulator if it was started.
+
 if sitl:
     sitl.stop()
