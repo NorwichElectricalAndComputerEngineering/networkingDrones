@@ -56,7 +56,6 @@ def averageRSSI(droneNumber=1):
 def connectDrone(droneNumber=1):
     if droneNumber==1:
         drone1 = connect('udpin:0.0.0.0:14550', wait_ready=True)
-#        arm_and_takeoff(1, drone1)
         print(" Global Location: %s" % drone1.location.global_frame)
         print(" Global Location (relative altitude): %s" % drone1.location.global_relative_frame)
         print(" Local Location: %s" % drone1.location.local_frame)
@@ -114,12 +113,15 @@ def currentLocation(droneNumber=1, vehicle=None):
         altitude = vehicle.location.global_relative_frame.alt    
         return lat1, long1, altitude
 def moveDrone(droneNumber=1, vehicle=None, latDelta=None, longDelta=None):
-        vehicle.airspeed = 1
-        lat1 = vehicle.location.global_relative_frame.lat
-        long1 = vehicle.location.global_relative_frame.long
-        altitude = vehicle.location.global_relative_frame.alt
-        # point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
-        vehicle.simple_goto(LocationGlobalRelative(lat1, long1, altitude))
-   
+        vehicle.airspeed = 2
+        if(vehicle.location.global_relative_frame.lat >= 44.1414788) | (vehicle.location.global_relative_frame.lat <= 44.1407269) | (vehicle.location.global_relative_frame.lon <= -72.6631911) | (vehicle.location.global_relative_frame.lon <= -72.6628782):
+            closeAll()
+        else: 
+            lat1 = vehicle.location.global_relative_frame.lat+latDelta
+            long1 = vehicle.location.global_relative_frame.long+longDelta
+            altitude = vehicle.location.global_relative_frame.alt
+            # point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
+            vehicle.simple_goto(LocationGlobalRelative(lat1, long1, altitude))
+            time.sleep(5)
 # Close vehicle object before exiting script
-
+    

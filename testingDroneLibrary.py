@@ -2,17 +2,43 @@ from currentWorkingLibrary import *
 import os
 import sys
 drone1 = connectDrone(1)
-readRSSI(1)
-distance = averageRSSI(1)
 arm_and_takeoff(3, drone1)#target altitude and vehicle
+time.sleep(2)
+readRSSI(1)
+RSSI1 = averageRSSI(1)
+distance = averageRSSI(1)
 '''
-Record all deltas of RSSI for drone1
-and drone2 and direction travelled
-'''
+Notes from testing:
 
-'''
-determine the change in RSSI to lat and long change
 '''
 location1 = currentLocation(1, drone1)
+latdelt = (44.1407269-44.1411495)/2# 50yards/2  
+moveDrone(1, drone1, latdelt, 0)
+location2 = currentLocation(1, drone1)
 
-print('Location: ', location1)
+readRSSI(1)
+RSSI2 = averageRSSI(1)
+
+moveDrone(1, drone1, latdelt, 0)
+location3 = currentLocation(1, drone1)
+
+readRSSI(1)
+RSSI3 = averageRSSI(1)
+
+moveDrone(1, drone1, latdelt, 0)
+location4 = currentLocation(1, drone1)
+readRSSI(1)
+RSSI4 = averageRSSI(1)
+
+print('Location1: ', location1)
+print('Location2: ', location2)
+print('Location3: ', location3)
+print('Location4: ', location4)
+print('RSSI 1: ', RSSI1)
+print('RSSI 1: ', RSSI2)
+print('RSSI 1: ', RSSI3)
+print('RSSI 1: ', RSSI4)
+'''
+drone1.attitude => Attitude:pitch=-0.0473402887583,yaw=0.9554438591,roll=-0.00338281784207
+drone1.attitude.yaw = something 
+'''
