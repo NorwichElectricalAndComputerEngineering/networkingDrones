@@ -35,10 +35,14 @@ def readRSSI(droneNumber=1):
         fileToWrite = 'drone2'
         serial_port = serial.Serial('/dev/ttyUSB1', 9600)
     xbee = XBee(serial_port)
-    f= open("rssiReadings/"+ fileToWrite +".txt","a")
-    for i in range(300):
-        f.write(ord(xbee.wait_read_frame()['rssi']))
+    f= open("rssiReadings/"+ fileToWrite +".txt","w")
+    for i in range(150):
+        f.write(str(xbee.wait_read_frame()['rf_data']))
+        f.write('\n')
     f.close()
+    '''
+    create time out parameter
+    '''
 
 def averageRSSI(droneNumber=1):
     if (droneNumber ==1):
@@ -96,16 +100,12 @@ def arm_and_takeoff(aTargetAltitude, vehicle):
             break
         time.sleep(1)
 
-def closeAll():
-    global drone1
-    drone1.mode = VehicleMode("RTL")
+def closeAll(droneName=None):
+    droneName.mode = VehicleMode("RTL")
     time.sleep(2)
-    drone1.close()
+    droneName.close()
     time.sleep(30)
-    global drone2
-    drone2.mode = VehicleMode("RTL")
-    time.sleep(2)
-    drone2.close()
+    
 
 def currentLocation(droneNumber=1, vehicle=None):
         lat1 = vehicle.location.global_relative_frame.lat
@@ -113,12 +113,15 @@ def currentLocation(droneNumber=1, vehicle=None):
         altitude = vehicle.location.global_relative_frame.alt    
         return lat1, long1, altitude
 def moveDrone(droneNumber=1, vehicle=None, latDelta=None, longDelta=None):
-        vehicle.airspeed = 2
-        if(vehicle.location.global_relative_frame.lat >= 44.1414788) | (vehicle.location.global_relative_frame.lat <= 44.1407269) | (vehicle.location.global_relative_frame.lon <= -72.6631911) | (vehicle.location.global_relative_frame.lon <= -72.6628782):
-            closeAll()
+        print("functionCall")
+        vehicle.airspeed = 1
+        if((vehicle.location.global_relative_frame.lat+latDelta >= 44.1414788) & (vehicle.location.global_relative_frame.lat+latDelta <= 44.1407269)) | ((vehicle.location.global_relative_frame.lon+longDelta <= -72.6631911) & (vehicle.location.global_relative_frame.lon+longDelta <= -72.6628782)):
+            print("out of bounds")            
+            closeAll(vehicle)
         else: 
+            print("moving")
             lat1 = vehicle.location.global_relative_frame.lat+latDelta
-            long1 = vehicle.location.global_relative_frame.long+longDelta
+            long1 = vehicle.location.global_relative_frame.lon+longDelta
             altitude = vehicle.location.global_relative_frame.alt
             # point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
             vehicle.simple_goto(LocationGlobalRelative(lat1, long1, altitude))
