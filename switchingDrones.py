@@ -10,15 +10,6 @@ import sys
 import os
 
 
-
-
-
-#need infinite loop of gaining information and changing networks. 
-
-
-
-
-
 #Set up option parsing to get connection string
 import argparse  
 parser = argparse.ArgumentParser(description='Print out vehicle state information. Connects to SITL on local PC by default.')
